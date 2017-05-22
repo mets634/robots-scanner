@@ -2,9 +2,27 @@
 
 import RobotsFileParser
 from URLSpider import Spider
+import sys
 
 
-base = 'http://www.yahoo.com'
+def main():
+    if len(sys.argv) < 2:
+        print 'USAGE: ./main.py <SITE TO SCAN>'
+        return
 
-s = Spider(base)
-print s.scan(RobotsFileParser.parse(base))
+    base = sys.argv[1]
+
+    s = Spider(base)
+    try:
+        print '\n'.join(['[*]FOUND: ' + path
+                        for path in s.scan(RobotsFileParser.parse(base))]
+                        )
+    except Exception, e:
+        print '[*]' + str(e)
+        print '[*]Unable to find robots.txt file'
+
+    except KeyboardInterrupt:
+        return
+
+if __name__ == '__main__':
+    main()

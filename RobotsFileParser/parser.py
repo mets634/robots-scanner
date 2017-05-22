@@ -1,6 +1,25 @@
 from urllib2 import urlopen
 import Debug
 
+
+def get(rbt_url):
+    """
+    A function to make a GET request.
+    :param rbt_url: The url to request.
+    :return: A list of disallowed options
+    """
+
+    Debug.debug('Attempting to parse %s' % rbt_url)
+
+    # if server doesn't exist or no internet
+    # connection, will throw URLError.
+    # if getting error code from server,
+    # will throw HTTPError
+    return [line.split(': ')[1].split(' ')[0]  # select the path while ignoring comments
+            for line in urlopen(rbt_url).read().split('\n')  # split result into lines
+            if line.startswith('Disallow')]  # is a disallow option
+
+
 def parse(url):
     """
     A function to parse a given url
@@ -12,16 +31,13 @@ def parse(url):
     :return A list of disallowed URL paths.
     """
 
-    rbt_url = url + '/robots.txt'
-
-    Debug.debug('Attempting to parse %s' % rbt_url)
+    # parse url
+    rbt_url = 'http://' + url + '/robots.txt'
 
     # read the url's page
 
-    # if server doesn't exist or no internet
-    # connection, will throw URLError.
-    # if getting error code from server,
-    # will throw HTTPError
-    return [line.split(': ')[1].split(' ')[0]  # select the path while ignoring comments
-            for line in urlopen(rbt_url).read().split('\n')  # split result into lines
-            if line.startswith('Disallow')]  # is a disallow option
+    try:
+        return get(rbt_url)
+    except:
+        rbt_url = 'https://' + url
+        return get(rbt_url)

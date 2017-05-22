@@ -1,4 +1,5 @@
 import Debug
+import urllib2
 
 
 class Spider(object):
@@ -32,9 +33,10 @@ class Spider(object):
             urls = self.__generate_url(self.__base + e)
 
             for u in urls:
-                Debug.debug('Checking path %s' % u)
-                if self.__check(u):  # is a valid path
-                    res.append(u)
+                url = 'http://' + u
+                Debug.debug('Checking path %s' % url)
+                if self.__check(url):  # is a valid path
+                    res.append(url)
                     Debug.debug('Path is valid')
                 else:
                     Debug.debug('Path is invalid')
@@ -63,4 +65,11 @@ class Spider(object):
         :return: Whether input is a valid web page.
         """
 
-        return True
+        try:
+            urllib2.urlopen(url)  # attempt to read webpage
+
+            # TODO: check if 404 is given on page rather than HTTP
+
+            return True
+        except:
+            return False
