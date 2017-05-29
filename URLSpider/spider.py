@@ -5,7 +5,9 @@ import urllib2
 class Spider(object):
     """A class to check for hidden web pages."""
 
-    COMMON_WEB_PAGES = ['index.html', 'index.php']
+    COMMON_WEB_PAGES = ['index.html', 'index.php', 'index.htm', 'index.asp',
+                        'default.html', 'default.htm', 'default.php', 'default.asp',
+                        'home.htm', 'home.html', 'home.php', 'home.asp']
 
     def __init__(self, baseurl):
         """
