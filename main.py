@@ -14,8 +14,12 @@ def main():
 
     s = Spider(base)
     try:
-        print '\n'.join(['[*]FOUND: ' + path
-                        for path in s.scan(RobotsFileParser.parse(base))]
+        valid, suspects = s.scan(RobotsFileParser.parse(base))
+        print '\n'.join(['[*]OPEN: ' + path
+                        for path in valid]
+                        )
+        print '\n'.join(['[*]SUSPECTED (to be closed): ' + path
+                         for path in suspects]
                         )
     except Exception, e:
         print '[*]' + str(e)

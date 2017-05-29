@@ -26,7 +26,8 @@ class Spider(object):
         :return: A list of hidden pages.
         """
 
-        res = []  # will hold valid paths
+        valid = []  # will hold valid paths
+        suspects = []  # will hold suspected web pages
 
         print '[*] Scanning website %s...' % self.__base
         for e in entries:
@@ -37,13 +38,18 @@ class Spider(object):
             for u in urls:
                 url = 'http://' + u
                 Debug.debug('Checking path %s' % url)
-                if self.__check(url):  # is a valid path
-                    res.append(url)
+
+                code = self.__check(url)
+                if  code == 2:  # is a valid path
+                    valid.append(url)
                     Debug.debug('Path is valid')
+                elif code == 1:
+                    suspects.append(url)
+                    Debug.debug('Path is suspected to be closed')
                 else:
                     Debug.debug('Path is invalid')
 
-        return res
+        return valid, suspects
 
     def __generate_url(self, url):
         """
@@ -64,14 +70,15 @@ class Spider(object):
         A method to check if given url is
         a valid web page.
         :param url: The URL to check.
-        :return: Whether input is a valid web page.
+        :return: 2 -> open, 1 -> suspected, 0 -> closed
         """
 
         try:
-            urllib2.urlopen(url)  # attempt to read webpage
+            html = urllib2.urlopen(url).read().lower()  # attempt to read webpage
 
-            # TODO: check if 404 is given on page rather than HTTP
+            if '404' in html and 'not found' in html:
+                return 1
+            return 2
 
-            return True
         except:
-            return False
+            return 0
